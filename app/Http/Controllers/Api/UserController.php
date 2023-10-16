@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-
-
 class UserController extends Controller
 {
 
@@ -37,29 +35,22 @@ class UserController extends Controller
     }
 
 
-    public function updateUsers(Request $request) {
+    public function updateUsers(Request $request)
+    {
 
         $user = auth()->user();
-        $userId = $user->id;
-        $user = User::find($userId);
 
-        if (!$user) {
-            return response()->json([
-                "msg" => "Usuario no encontrado",
-            ], 404);
-        }
-    
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $userId,
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'
         ]);
-    
+
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         $user->save();
-    
+
         return response()->json([
             "user" => $user,
             "msg" => "¡Usuario actualizado exitosamente!",
@@ -103,11 +94,22 @@ class UserController extends Controller
     }
 
     public function userProfile() {
+        $user = auth()->user();
+
         return response()->json([
             "status" => 0,
             "msg" => "Acerca del perfil de usuario",
-            "data" => auth()->user()
+            "data" => [
+                "id" => $user-> id,
+                "name" => $user-> name,
+                "email" => $user-> email,
+            ]
         ]); 
+    }
+
+    public function countUsers() {
+    $count = User::count();
+    return $count;
     }
 
     public function logout() {

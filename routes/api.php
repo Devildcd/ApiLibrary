@@ -33,6 +33,7 @@ Route::group( ['middleware' => ["auth:sanctum"]], function(){
 // Rutas publicas para auth
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
+Route::get('user-count', [UserController::class, 'countUsers']);
 // Rutas publicas para libros 
 Route::get('/libros-publicos', 'App\Http\Controllers\LibroController@index');
 Route::get('/libro/{id}', 'App\Http\Controllers\LibroController@show');
